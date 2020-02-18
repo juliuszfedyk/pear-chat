@@ -29,6 +29,15 @@
       partnerId = connection.peer;
     });
   });
+	let messages = [
+		{ text: 'Hello', type: 'incoming' },
+		{ text: 'Hi', type: 'outgoing' },
+		{ text: 'How are you?', type: 'incoming' }
+  ];
+
+	function handleNewMessage(event) {
+    messages = [...messages, {text: event.detail.text, type: 'outgoing'}];
+	}
 </script>
 
 <style>
@@ -41,8 +50,8 @@
 <div class="container">
   <div class="row">
     <div class="col-12 col-md-8 main-window">
-      <MessageList />
-      <SendMessage />
+      <MessageList messages="{messages}" />
+      <SendMessage on:message={handleNewMessage} />
     </div>
     <div class="col-12 col-md-4">
       <SideMenu

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <script>
   import { createEventDispatcher } from "svelte";
   export let id;
@@ -5,10 +6,21 @@
   export let connected;
   const dispatch = createEventDispatcher();
 </script>
+=======
+<div class="side-menu">
+  <button class="btn btn-primary">Create chat</button>
+  <button class="btn btn-primary">Connect to chat</button>
+</div>
+>>>>>>> master
 
 <style>
   .side-menu {
     padding: 8px;
+  }
+
+  button {
+    display: block;
+    width: 100%;
   }
 </style>
 

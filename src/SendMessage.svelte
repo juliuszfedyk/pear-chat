@@ -1,7 +1,31 @@
+<script> 
+	import { createEventDispatcher } from 'svelte';
+
+	const dispatch = createEventDispatcher();
+  
+  let newMessage = '';
+
+	function sendMessage() {
+    if (newMessage === '') { return }
+    
+		dispatch('message', {
+			text: newMessage
+    });
+    newMessage = '';
+  }
+  
+	function handleInputKeydown(event) {
+    if (event.key === 'Enter') {
+      sendMessage()
+    }
+	}
+
+</script>
+
 <div class="type-message">
   <div class="input-message-wrapper">
-    <input type="text" class="write-message" placeholder="Type a message" />
-    <button class="message-send-btn" type="button">
+    <input bind:value={newMessage} on:keydown={handleInputKeydown} type="text" class="write-message" placeholder="Type a message" />
+    <button on:click={sendMessage} class="message-send-btn" type="button">
       <i class="fa fa-paper-plane-o" aria-hidden="true" />
     </button>
   </div>
