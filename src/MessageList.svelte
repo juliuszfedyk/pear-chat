@@ -3,8 +3,8 @@
   export let messages;
 </script>
 
-<div class="messages-list-wrapper">
-  <div class="messages-list">
+<div class="message-list-wrapper">
+  <div class="message-list">
     {#each messages as { text, type }}
       <Message
         text="{text}"
@@ -13,3 +13,10 @@
     {/each}
   </div>
 </div>
+
+<style>
+  .message-list-wrapper {
+    height: 400px;
+    overflow-y: scroll;
+  }
+</style>
