@@ -7,7 +7,7 @@
 
 	function sendMessage() {
     if (newMessage === '') { return }
-    
+
 		dispatch('message', {
 			text: newMessage
     });
@@ -19,7 +19,6 @@
       sendMessage()
     }
 	}
-
 </script>
 
 <div class="type-message">
