@@ -8,6 +8,7 @@
   let partnerId = "";
   let peer;
   let connection;
+  let messages = [];
 
   const connect = () => {
     connection = peer.connect(partnerId);
@@ -24,20 +25,22 @@
     });
     peer.on("connection", newConnection => {
       connection = newConnection;
-      connection.on('open', () => {
-      })
+      messages = messages = [...messages, {
+        text: `${connection.peer} has joined`,
+        type: "admin"
+      }];
+      connection.on("data", text => {
+        console.log(text);
+        messages = [...messages, { text, type: "incoming" }];
+      });
       partnerId = connection.peer;
     });
   });
-	let messages = [
-		{ text: 'Hello', type: 'incoming' },
-		{ text: 'Hi', type: 'outgoing' },
-		{ text: 'How are you?', type: 'incoming' }
-  ];
 
-	function handleNewMessage(event) {
-    messages = [...messages, {text: event.detail.text, type: 'outgoing'}];
-	}
+  function handleNewMessage(event) {
+    messages = [...messages, { text: event.detail.text, type: "outgoing" }];
+    connection.send(event.detail.text);
+  }
 </script>
 
 <style>
@@ -50,12 +53,12 @@
 <div class="container">
   <div class="row">
     <div class="col-12 col-md-8 main-window">
-      <MessageList messages="{messages}" />
+      <MessageList {messages} />
       <SendMessage on:message={handleNewMessage} />
     </div>
     <div class="col-12 col-md-4">
       <SideMenu
-        id={id}
+        {id}
         bind:partnerId
         on:connect={connect}
         on:closeConnection={closeConnection}
