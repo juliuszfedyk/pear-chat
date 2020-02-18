@@ -69,3 +69,7 @@ button:focus {
 	border: 1px solid #05728f;
 	background-color: #05728f;
 }
+
+input:focus, button:focus {
+	outline: none !important;
+}
