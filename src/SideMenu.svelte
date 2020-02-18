@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 <script>
   import { createEventDispatcher } from "svelte";
   export let id;
@@ -6,23 +5,6 @@
   export let connected;
   const dispatch = createEventDispatcher();
 </script>
-=======
-<div class="side-menu">
-  <button class="btn btn-primary">Create chat</button>
-  <button class="btn btn-primary">Connect to chat</button>
-</div>
->>>>>>> master
-
-<style>
-  .side-menu {
-    padding: 8px;
-  }
-
-  button {
-    display: block;
-    width: 100%;
-  }
-</style>
 
 <div class="side-menu">
   <h2>
@@ -44,8 +26,21 @@
     <h2>
       <span class="badge badge-secondary">{partnerId}</span>
     </h2>
-    <button class="btn btn-primary" on:click={() => dispatch('closeConnection')}>
+    <button
+      class="btn btn-primary"
+      on:click={() => dispatch('closeConnection')}>
       Disconnect
     </button>
   {/if}
 </div>
+
+<style>
+  .side-menu {
+    padding: 8px;
+  }
+
+  button {
+    display: block;
+    width: 100%;
+  }
+</style>
