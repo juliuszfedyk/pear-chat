@@ -64,3 +64,8 @@ button:not(:disabled):active {
 button:focus {
 	border-color: #666;
 }
+
+.btn-primary {
+	border: 1px solid #05728f;
+	background-color: #05728f;
+}
