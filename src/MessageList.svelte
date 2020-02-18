@@ -1,12 +1,15 @@
 <script>
   import Message from "./Message.svelte";
+  export let messages;
 </script>
 
 <div class="messages-list-wrapper">
   <div class="messages-list">
-    <Message
-      text="Test which is a new approach to have all solutions"
-      type="incoming" />
-    <Message text="Test, which is a new approach to have" type="outgoing" />
+    {#each messages as { text, type }}
+      <Message
+        text="{text}"
+        type="{type}"
+      />
+    {/each}
   </div>
 </div>

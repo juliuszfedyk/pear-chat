@@ -2,12 +2,18 @@
   import SendMessage from "./SendMessage.svelte";
   import MessageList from "./MessageList.svelte";
   import SideMenu from "./SideMenu.svelte";
+
+	let messages = [
+		{ text: 'Hello', type: 'incoming' },
+		{ text: 'Hi', type: 'outgoing' },
+		{ text: 'How are you?', type: 'incoming' }
+	];
 </script>
 
 <div class="container">
   <div class="row">
     <div class="col-12 col-md-8 main-window">
-      <MessageList />
+      <MessageList messages="{messages}" />
       <SendMessage />
     </div>
     <div class="col-12 col-md-4">

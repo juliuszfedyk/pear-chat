@@ -3,8 +3,7 @@
   export let type;
 </script>
 
-<div
-  class="message {type === 'incoming' ? 'incoming-message' : 'outgoing-message'}">
+<div class="message {type === 'incoming' ? 'incoming-message' : 'outgoing-message'}">
   <p>{text}</p>
   <span class="time-date">11:01 AM | June 9</span>
 </div>
