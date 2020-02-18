@@ -10,7 +10,7 @@
   ];
 
 	function handleNewMessage(event) {
-    messages = [...messages, {text: event.detail.text, type: 'incoming'}];
+    messages = [...messages, {text: event.detail.text, type: 'outgoing'}];
 	}
 </script>
 
