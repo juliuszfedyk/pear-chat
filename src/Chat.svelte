@@ -2,6 +2,8 @@
   import SendMessage from "./SendMessage.svelte";
   import MessageList from "./MessageList.svelte";
   import SideMenu from "./SideMenu.svelte";
+  import VideoChat from "./VideoChat.svelte"
+
   import { onMount } from "svelte";
 
   let id = "";
@@ -11,15 +13,25 @@
   let messages = [];
 
   onMount(() => {
-    peer = new Peer(Math.random() > 0.5 ? "juliusz" : "pawel", {
-      host: "li2039-53.members.linode.com",
-      port: 443,
-      path: '/api',
-      config: {
-        iceServers: [
-          { url: "turn:juliusz@172.105.78.53:3478", username: 'juliusz', credential: "pawel" }
-        ]
-      }
+    peer = new Peer({
+      config: {'iceServers': [
+        { url: 'stun:stun3.l.google.com:19302' },
+        { 
+          url: 'turn:numb.viagenie.ca',
+          credential: 'muazkh',
+          username: 'webrtc@live.com'
+        }
+      ]}
+//     testing our turn:      
+//     peer = new Peer(Math.random() > 0.5 ? "juliusz" : "pawel", {
+//       host: "li2039-53.members.linode.com",
+//       port: 443,
+//       path: '/api',
+//       config: {
+//         iceServers: [
+//           { url: "turn:juliusz@172.105.78.53:3478", username: 'juliusz', credential: "pawel" }
+//         ]
+//       }
     });
     peer.on("error", error => {
       addMessage(error, "admin");
@@ -102,6 +114,18 @@
         on:connect={connect}
         on:closeConnection={closeConnection}
         connected={!!connection} />
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-12">
+      {#if peer}
+        <VideoChat
+          {peer}
+          {partnerId}
+        />
+      {:else}
+        <div>Please connect to see video chat</div>
+      {/if}
     </div>
   </div>
 </div>
