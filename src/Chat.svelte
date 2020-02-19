@@ -81,7 +81,14 @@
   </div>
   <div class="row">
     <div class="col-12">
-      <VideoChat/>
+      {#if peer}
+        <VideoChat
+          {peer}
+          {partnerId}
+        />
+      {:else}
+        <div>Please connect to see video chat</div>
+      {/if}
     </div>
   </div>
 </div>

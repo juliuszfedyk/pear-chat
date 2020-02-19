@@ -1,14 +1,26 @@
 <script>
-	import { createEventDispatcher } from 'svelte';
+  import { createEventDispatcher } from 'svelte';
+  import { onMount } from 'svelte';
+  
+  export let peer;
+  export let partnerId;
 
   const dispatch = createEventDispatcher();
-  
-  const requestLocalVideo = (callbacks) => {
-      // Monkeypatch for crossbrowser geusermedia
-      navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
 
-      // Request audio an video
-      navigator.getUserMedia({ audio: true, video: true }, callbacks.success , callbacks.error);
+	onMount(() => {
+    setup()
+	});
+  
+  const requestLocalVideo = async (callbacks) => {
+      let stream = null;
+
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
+        window.localStream = stream;
+        onReceiveStream(stream, 'my-camera');
+      } catch(err) {
+        console.error(error)
+      }
   }
 
   const onReceiveStream = (stream, element_id) => {
@@ -21,24 +33,64 @@
       window.peer_stream = stream;
   }
 
-  const startVideo = () => {
-    requestLocalVideo({
-      success: function(stream){
-        window.localStream = stream;
-        onReceiveStream(stream, 'my-camera');
-      },
-      error: function(err){
-        alert("Cannot get access to your camera and video !");
-        console.error(err);
+  const setup = () => {
+    peer.on('call', async (call) => {
+      let acceptsCall = confirm("Videocall incoming, do you want to accept it ?");
+
+      if(acceptsCall){
+          await requestLocalVideo();
+          // Answer the call with your own video/audio stream
+          call.answer(window.localStream);
+
+          // Receive data
+          call.on('stream', (stream) => {
+              // Store a global reference of the other user stream
+              window.peer_stream = stream;
+              // Display the stream of the other user in the peer-camera video element !
+              onReceiveStream(stream, 'peer-camera');
+          });
+
+          // Handle when the call finishes
+          call.on('close', () => {
+              alert("The videocall has finished");
+          });
+
+          // use call.close() to finish a call
+      } else {
+          console.log("Call denied !");
       }
+    });
+  }
+
+  const startVideoChat = async () => {
+    await requestLocalVideo()
+    console.log('Calling to ' + partnerId);
+    console.log(peer);
+
+    let call = peer.call(partnerId, window.localStream);
+    console.log(call)
+
+    call.on('stream', function (stream) {
+        window.peer_stream = stream;
+
+        onReceiveStream(stream, 'peer-camera');
     });
   }
 </script>
 
+<div class="video-chat">
+  <button
+    class="btn btn-primary d-block"
+    on:click={startVideoChat}>
+    Start video chat
+  </button>
+  <video id="my-camera"  width="300" height="300" autoplay="autoplay" muted="true" class="mx-auto d-inline-block"></video>
+  <video id="peer-camera"  width="300" height="300" autoplay="autoplay" muted="true" class="mx-auto d-inline-block"></video>
+</div>
 
-<button
-  class="btn btn-primary"
-  on:click={startVideo}>
-  Start video
-</button>
-<video id="my-camera"  width="300" height="300" autoplay="autoplay" muted="true" class="mx-auto d-block"></video>
+
+<style>
+  .video-chat {
+    margin-top: 30px;
+  }
+</style>
