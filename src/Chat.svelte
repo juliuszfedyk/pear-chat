@@ -2,45 +2,38 @@
   import SendMessage from "./SendMessage.svelte";
   import MessageList from "./MessageList.svelte";
   import SideMenu from "./SideMenu.svelte";
-  import VideoChat from "./VideoChat.svelte"
+  import VideoChat from "./VideoChat.svelte";
 
   import { onMount } from "svelte";
 
-  let id = "";
+  let id;
   let partnerId = "";
   let peer;
   let connection;
   let messages = [];
 
-  onMount(() => {
-      peer = new Peer(Math.random() > 0.5 ? "juliusz" : "pawel", {
+  function connectToServer() {
+    console.log(id);
+    peer = new Peer(id, {
       host: "li2039-53.members.linode.com",
       port: 443,
-      path: '/api',
-      config: {'iceServers': [
-        { url: 'stun:stun3.l.google.com:19302' },
-        { 
-          url: 'turn:numb.viagenie.ca',
-          credential: 'muazkh',
-          username: 'webrtc@live.com'
-        }
-      ]}
-//     testing our turn:      
-//     peer = new Peer(Math.random() > 0.5 ? "juliusz" : "pawel", {
-//       host: "li2039-53.members.linode.com",
-//       port: 443,
-//       path: '/api',
-//       config: {
-//         iceServers: [
-//           { url: "turn:juliusz@172.105.78.53:3478", username: 'juliusz', credential: "pawel" }
-//         ]
-//       }
+      path: "/api",
+      config: {
+        iceServers: [
+          { url: "stun:stun3.l.google.com:19302" },
+          {
+            url: "turn:numb.viagenie.ca",
+            credential: "muazkh",
+            username: "webrtc@live.com"
+          }
+        ]
+      }
     });
     peer.on("error", error => {
       addMessage(error, "admin");
     });
     peer.on("open", newId => {
-      debugMsg("connection to peer opened, id is", newId);
+      debugMsg("connection to server opened, id is", newId);
       id = newId;
     });
     peer.on("connection", newConnection => {
@@ -52,22 +45,27 @@
         addMessage(`${partnerId} has joined`, "admin");
       });
     });
-  });
+  }
+
+  function disconnectFromServer() {
+    peer.disconnect();
+    peer = null;
+  }
 
   function debugMsg(msg, obj) {
     console.log(msg, obj);
     addMessage(msg, "admin");
   }
 
-  const connect = () => {
+  function connectToPeer() {
     const connection = peer.connect(partnerId);
     debugMsg("requested connection", connection);
     connection.on("open", () => {
       debugMsg("outgoing connection open", connection);
       setConnection(connection);
     });
-  };
-  const closeConnection = () => {
+  }
+  const disconnectFromPeer = () => {
     connection.close();
   };
 
@@ -112,20 +110,20 @@
     </div>
     <div class="col-12 col-md-4">
       <SideMenu
-        {id}
+        bind:id
         bind:partnerId
-        on:connect={connect}
-        on:closeConnection={closeConnection}
-        connected={!!connection} />
+        on:connectToServer={connectToServer}
+        on:connectToPeer={connectToPeer}
+        on:disconnectFromPeer={disconnectFromPeer}
+        connectedToPeer={!!connection}
+        connectedToServer={!!peer}
+        on:disconnectFromServer={disconnectFromServer} />
     </div>
   </div>
   <div class="row">
     <div class="col-12">
       {#if peer}
-        <VideoChat
-          {peer}
-          {partnerId}
-        />
+        <VideoChat {peer} {partnerId} />
       {:else}
         <div>Please connect to see video chat</div>
       {/if}

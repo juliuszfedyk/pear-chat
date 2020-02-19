@@ -2,37 +2,10 @@
   import { createEventDispatcher } from "svelte";
   export let id;
   export let partnerId;
-  export let connected;
+  export let connectedToPeer;
+  export let connectedToServer;
   const dispatch = createEventDispatcher();
 </script>
-
-<div class="side-menu">
-  <h2>
-    <span class="badge badge-secondary">{id}</span>
-  </h2>
-  {#if !connected}
-    <input
-      type="text"
-      bind:value={partnerId}
-      class="form-control"
-      id="partner_id" />
-    <button
-      class="btn btn-primary"
-      on:click={() => dispatch('connect')}
-      disabled={!partnerId}>
-      Connect
-    </button>
-  {:else}
-    <h2>
-      <span class="badge badge-secondary">{partnerId}</span>
-    </h2>
-    <button
-      class="btn btn-primary"
-      on:click={() => dispatch('closeConnection')}>
-      Disconnect
-    </button>
-  {/if}
-</div>
 
 <style>
   .side-menu {
@@ -44,3 +17,54 @@
     width: 100%;
   }
 </style>
+
+<div class="side-menu">
+  <input
+    type="text"
+    class="form-control"
+    id="my_id"
+    bind:value={id}
+    placeholder="choose your name"
+    disabled={connectedToServer} />
+    {#if !connectedToServer}
+  <button
+    type="button"
+    class="btn btn-primary"
+    on:click|preventDefault = {() => dispatch('connectToServer')}>
+    Log in.
+  </button>
+    {:else}
+      <button
+    type="button"
+    class="btn btn-primary"
+    on:click|preventDefault = {() => dispatch('disconnectFromServer')}>
+    Log Out.
+  </button>
+    {/if}
+  {#if !connectedToPeer}
+    <input
+      type="text"
+      bind:value={partnerId}
+      class="form-control"
+      id="partner_id"
+      disabled={connectedToPeer}
+      placeholder="find a friend" />
+    <button
+      class="btn btn-primary"
+      type="button"
+      on:click|preventDefault ={() => dispatch('connectToPeer')}
+      disabled={!partnerId}>
+      Connect
+    </button>
+  {:else }
+    <h2>
+      <span class="badge badge-secondary">{partnerId}</span>
+    </h2>
+    <button
+    type="button"
+      class="btn btn-primary"
+      on:click|preventDefault ={() => dispatch('disconnectFromPeer')}>
+      Disconnect
+    </button>
+  {/if}
+</div>
