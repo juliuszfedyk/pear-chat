@@ -13,7 +13,7 @@
   onMount(() => {
     peer = new Peer(Math.random() > 0.5 ? "juliusz" : "pawel", {
       host: "li2039-53.members.linode.com",
-      port: 80,
+      port: 443,
       path: '/api',
       config: {
         iceServers: [

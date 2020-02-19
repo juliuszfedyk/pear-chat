@@ -10,21 +10,21 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname + '../public/index.html'));
 });
 
-var privateKey = fs.readFileSync( '/certs/privkey.pem' );
-var certificate = fs.readFileSync( '/certs/fullchain.pem' );
+const privateKey = fs.readFileSync( '/certs/privkey.pem' );
+const certificate = fs.readFileSync( '/certs/fullchain.pem' );
 
 const server = https.createServer({
     key: privateKey,
     cert: certificate
-}, app).listen(80);
+}, app).listen(443);
 
 const options = {
     debug: true,
-    port: 80,
+    port: 443,
     path: '/api',
     ssl: {
-        cert: "/cetrs/fullchain.pem",
-        key: "/certs/privkey.pem"
+        cert: certificate,
+        key: privateKey
     }
 }
 
