@@ -13,7 +13,10 @@
   let messages = [];
 
   onMount(() => {
-    peer = new Peer({
+      peer = new Peer(Math.random() > 0.5 ? "juliusz" : "pawel", {
+      host: "li2039-53.members.linode.com",
+      port: 443,
+      path: '/api',
       config: {'iceServers': [
         { url: 'stun:stun3.l.google.com:19302' },
         { 
