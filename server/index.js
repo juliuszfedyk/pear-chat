@@ -3,6 +3,7 @@ const app = express();
 const path = require('path');
 const https = require('https');
 const { ExpressPeerServer } = require('peer');
+const fs = require('fs');
 
 app.use(express.static(path.join(__dirname, '../public')));
 app.get('/', (req, res) => {
