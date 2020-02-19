@@ -16,9 +16,10 @@
       id = newId;
     });
     peer.on("connection", newConnection => {
-      setConnection(newConnection);
-      addMessage(`${connection.peer} has joined`, "admin");
-      partnerId = connection.peer;
+      newConnection.on("open", () => {
+        setConnection(newConnection);
+        addMessage(`${partnerId} has joined`, "admin");
+      });
     });
   });
 
@@ -34,6 +35,7 @@
   }
 
   function setConnection(newConnection) {
+    partnerId = newConnection.peer;
     connection = newConnection;
     connection.on("data", text => {
       addMessage(text, "incoming");
@@ -41,6 +43,9 @@
     connection.on("close", () => {
       addMessage("connection closed", "admin");
       connection = null;
+    });
+    connection.on("error", error => {
+      addMessage(error, "admin");
     });
   }
 
