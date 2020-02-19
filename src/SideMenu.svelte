@@ -47,7 +47,7 @@
       bind:value={partnerId}
       class="form-control"
       id="partner_id"
-      disabled={connectedToPeer}
+      disabled={connectedToPeer && connectedToServer}
       placeholder="find a friend" />
     <button
       class="btn btn-primary"
