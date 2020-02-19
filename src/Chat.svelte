@@ -11,7 +11,13 @@
   let messages = [];
 
   onMount(() => {
-    peer = new Peer();
+    peer = new Peer({
+      host: "li2039-53.members.linode.com",
+      port: 9000
+    });
+    peer.on("error", error => {
+      addMessage(error, "admin");
+    });
     peer.on("open", newId => {
       id = newId;
     });
