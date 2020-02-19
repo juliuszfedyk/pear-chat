@@ -2,6 +2,8 @@
   import SendMessage from "./SendMessage.svelte";
   import MessageList from "./MessageList.svelte";
   import SideMenu from "./SideMenu.svelte";
+  import VideoChat from "./VideoChat.svelte"
+
   import { onMount } from "svelte";
 
   let id = "";
@@ -75,6 +77,11 @@
         on:connect={connect}
         on:closeConnection={closeConnection}
         connected={!!connection} />
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-12">
+      <VideoChat/>
     </div>
   </div>
 </div>
