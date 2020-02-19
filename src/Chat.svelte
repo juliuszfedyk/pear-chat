@@ -11,7 +11,7 @@
   let messages = [];
 
   onMount(() => {
-    peer = new Peer({
+    peer = new Peer(Math.random() > 0.5 ? 'juliusz' : 'pawel', {
       host: "li2039-53.members.linode.com",
       port: 9000
     });
@@ -19,18 +19,29 @@
       addMessage(error, "admin");
     });
     peer.on("open", newId => {
+      debugMsg("connection to peer opened, id is", newId);
       id = newId;
     });
     peer.on("connection", newConnection => {
+      debugMsg("got connection from server", newConnection);
+
       newConnection.on("open", () => {
+        debugMsg("got connection 'open' from peer", newConnection);
         setConnection(newConnection);
         addMessage(`${partnerId} has joined`, "admin");
       });
     });
   });
 
+  function debugMsg(msg, obj) {
+      console.log(msg, obj);
+      addMessage(msg, "admin");
+  }
+
   const connect = () => {
-    setConnection(peer.connect(partnerId));
+    const connection = peer.connect(partnerId);
+    debugMsg('requested connection', connection);
+    setConnection(connection);
   };
   const closeConnection = () => {
     connection.close();
@@ -41,6 +52,7 @@
   }
 
   function setConnection(newConnection) {
+    debugMsg('setting up connection', newConnection);
     partnerId = newConnection.peer;
     connection = newConnection;
     connection.on("data", text => {
