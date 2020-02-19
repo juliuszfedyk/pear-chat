@@ -1,6 +1,7 @@
 const express = require('express');
 const app = express();
 const path = require('path');
+const https = require('https');
 const { ExpressPeerServer } = require('peer');
 
 app.use(express.static(path.join(__dirname, '../public')));
@@ -8,9 +9,14 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname + '../public/index.html'));
 });
 
-// =======
+var privateKey = fs.readFileSync( '/certs/privkey.pem' );
+var certificate = fs.readFileSync( '/certs/fullchain.pem' );
 
-const server = app.listen(80);
+const server = https.createServer({
+    key: privateKey,
+    cert: certificate
+}, app).listen(80);
+
 const options = {
     debug: true,
     port: 80,
