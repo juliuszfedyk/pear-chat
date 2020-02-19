@@ -26,7 +26,7 @@
       debugMsg("got connection from server", newConnection);
 
       newConnection.on("open", () => {
-        debugMsg("got connection 'open' from peer", newConnection);
+        debugMsg("incoming connection 'open'", newConnection);
         setConnection(newConnection);
         addMessage(`${partnerId} has joined`, "admin");
       });
@@ -41,7 +41,10 @@
   const connect = () => {
     const connection = peer.connect(partnerId);
     debugMsg('requested connection', connection);
-    setConnection(connection);
+    connection.on('open', () => {
+      debugMsg("outgoing connection open", connection)
+      setConnection(connection);
+    });
   };
   const closeConnection = () => {
     connection.close();
