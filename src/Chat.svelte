@@ -22,20 +22,47 @@
           username: 'webrtc@live.com'
         }
       ]}
+//     testing our turn:      
+//     peer = new Peer(Math.random() > 0.5 ? "juliusz" : "pawel", {
+//       host: "li2039-53.members.linode.com",
+//       port: 443,
+//       path: '/api',
+//       config: {
+//         iceServers: [
+//           { url: "turn:juliusz@172.105.78.53:3478", username: 'juliusz', credential: "pawel" }
+//         ]
+//       }
+    });
+    peer.on("error", error => {
+      addMessage(error, "admin");
     });
     peer.on("open", newId => {
+      debugMsg("connection to peer opened, id is", newId);
       id = newId;
     });
     peer.on("connection", newConnection => {
+      debugMsg("got connection from server", newConnection);
+
       newConnection.on("open", () => {
+        debugMsg("incoming connection 'open'", newConnection);
         setConnection(newConnection);
         addMessage(`${partnerId} has joined`, "admin");
       });
     });
   });
 
+  function debugMsg(msg, obj) {
+    console.log(msg, obj);
+    addMessage(msg, "admin");
+  }
+
   const connect = () => {
-    setConnection(peer.connect(partnerId));
+    const connection = peer.connect(partnerId);
+    debugMsg("requested connection", connection);
+    connection.on("open", () => {
+      debugMsg("outgoing connection open", connection);
+      setConnection(connection);
+    });
   };
   const closeConnection = () => {
     connection.close();
@@ -46,6 +73,7 @@
   }
 
   function setConnection(newConnection) {
+    debugMsg("setting up connection", newConnection);
     partnerId = newConnection.peer;
     connection = newConnection;
     connection.on("data", text => {
