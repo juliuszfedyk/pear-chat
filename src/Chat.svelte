@@ -11,9 +11,15 @@
   let messages = [];
 
   onMount(() => {
-    peer = new Peer(Math.random() > 0.5 ? 'juliusz' : 'pawel', {
+    peer = new Peer(Math.random() > 0.5 ? "juliusz" : "pawel", {
       host: "li2039-53.members.linode.com",
-      port: 9000
+      port: 9000,
+      config: {
+        iceServers: [
+          { url: "stun:stun.l.google.com:19302" },
+          { url: "turn:juliusz@172.105.78.53:3478", credential: "pawel" }
+        ]
+      }
     });
     peer.on("error", error => {
       addMessage(error, "admin");
@@ -34,15 +40,15 @@
   });
 
   function debugMsg(msg, obj) {
-      console.log(msg, obj);
-      addMessage(msg, "admin");
+    console.log(msg, obj);
+    addMessage(msg, "admin");
   }
 
   const connect = () => {
     const connection = peer.connect(partnerId);
-    debugMsg('requested connection', connection);
-    connection.on('open', () => {
-      debugMsg("outgoing connection open", connection)
+    debugMsg("requested connection", connection);
+    connection.on("open", () => {
+      debugMsg("outgoing connection open", connection);
       setConnection(connection);
     });
   };
@@ -55,7 +61,7 @@
   }
 
   function setConnection(newConnection) {
-    debugMsg('setting up connection', newConnection);
+    debugMsg("setting up connection", newConnection);
     partnerId = newConnection.peer;
     connection = newConnection;
     connection.on("data", text => {
