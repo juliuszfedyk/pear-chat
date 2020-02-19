@@ -13,7 +13,16 @@
   let messages = [];
 
   onMount(() => {
-    peer = new Peer();
+    peer = new Peer({
+      config: {'iceServers': [
+        { url: 'stun:stun3.l.google.com:19302' },
+        { 
+          url: 'turn:numb.viagenie.ca',
+          credential: 'muazkh',
+          username: 'webrtc@live.com'
+        }
+      ]}
+    });
     peer.on("open", newId => {
       id = newId;
     });
