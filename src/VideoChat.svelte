@@ -84,8 +84,8 @@
     on:click={startVideoChat}>
     Start video chat
   </button>
-  <video id="my-camera"  width="300" height="300" autoplay="autoplay" muted="true" class="mx-auto d-inline-block"></video>
-  <video id="peer-camera"  width="300" height="300" autoplay="autoplay" muted="true" class="mx-auto d-inline-block"></video>
+  <video id="my-camera" width="300" height="300" autoplay="autoplay" playsinline muted="true" class="mx-auto d-inline-block"></video>
+  <video id="peer-camera" width="300" height="300" autoplay="autoplay" playsinline muted="true" class="mx-auto d-inline-block"></video>
 </div>
 
 
