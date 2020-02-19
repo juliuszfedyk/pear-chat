@@ -10,35 +10,42 @@
   let connection;
   let messages = [];
 
-  const connect = () => {
-    connection = peer.connect(partnerId);
-  };
-  const closeConnection = () => {
-    connection.close();
-    connection = null;
-  };
-
   onMount(() => {
     peer = new Peer();
     peer.on("open", newId => {
       id = newId;
     });
     peer.on("connection", newConnection => {
-      connection = newConnection;
-      messages = messages = [...messages, {
-        text: `${connection.peer} has joined`,
-        type: "admin"
-      }];
-      connection.on("data", text => {
-        console.log(text);
-        messages = [...messages, { text, type: "incoming" }];
-      });
+      setConnection(newConnection);
+      addMessage(`${connection.peer} has joined`, "admin");
       partnerId = connection.peer;
     });
   });
 
+  const connect = () => {
+    setConnection(peer.connect(partnerId));
+  };
+  const closeConnection = () => {
+    connection.close();
+  };
+
+  function addMessage(text, type) {
+    messages = [...messages, { text, type }];
+  }
+
+  function setConnection(newConnection) {
+    connection = newConnection;
+    connection.on("data", text => {
+      addMessage(text, "incoming");
+    });
+    connection.on("close", () => {
+      addMessage("connection closed", "admin");
+      connection = null;
+    });
+  }
+
   function handleNewMessage(event) {
-    messages = [...messages, { text: event.detail.text, type: "outgoing" }];
+    addMessage(event.detail.text, "outgoing");
     connection.send(event.detail.text);
   }
 </script>
