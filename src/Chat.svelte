@@ -17,7 +17,7 @@
       config: {
         iceServers: [
           { url: "stun:stun.l.google.com:19302" },
-          { url: "turn:juliusz@172.105.78.53:3478", credential: "pawel" }
+          { url: "turn:juliusz@172.105.78.53:3478", username: 'juliusz', credential: "pawel" }
         ]
       }
     });
