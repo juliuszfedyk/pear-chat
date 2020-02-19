@@ -14,7 +14,11 @@ const server = app.listen(80);
 const options = {
     debug: true,
     port: 80,
-    path: '/api'
+    path: '/api',
+    ssl: {
+        cert: "/cetrs/fullchain.pem",
+        key: "/certs/privkey.pem"
+    }
 }
 
 const peerserver = ExpressPeerServer(server, options);
