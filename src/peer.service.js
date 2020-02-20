@@ -43,7 +43,7 @@ export function getPeerService() {
     peerService.server.subscribe(peer => {
       if (peer) {
         peer.on("error", error => {
-          addMessage(error, "admin");
+        debugMsg(error, "admin");
         });
         peer.on("open", newId => {
           debugMsg("connection to server opened, id is", newId);
@@ -64,11 +64,11 @@ export function getPeerService() {
           peerService.messages.update(messages => [...messages, { text, type: "incoming" }]);
         });
         dataConnection.on("close", () => {
-          addMessage("connection closed", "admin");
+        debugMsg("connection closed", "admin");
           peerService.dataConnection.set(null);
         });
         dataConnection.on("error", error => {
-          addMessage(error, "admin");
+        debugMsg(error, "admin");
         });
       }
     })
