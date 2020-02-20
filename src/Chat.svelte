@@ -3,9 +3,11 @@
   import MessageList from "./MessageList.svelte";
   import SideMenu from "./SideMenu.svelte";
   import VideoChat from "./VideoChat.svelte";
+  import peerConfig from "../config.json";
 
   import { onMount } from "svelte";
 
+  const debugMode = true;
   let id;
   let partnerId = "";
   let peer;
@@ -13,22 +15,8 @@
   let messages = [];
 
   function connectToServer() {
-    console.log(id);
-    peer = new Peer(id, {
-      host: "li2039-53.members.linode.com",
-      port: 443,
-      path: "/api",
-      config: {
-        iceServers: [
-          { url: "stun:stun3.l.google.com:19302" },
-          {
-            url: "turn:numb.viagenie.ca",
-            credential: "muazkh",
-            username: "webrtc@live.com"
-          }
-        ]
-      }
-    });
+    debugMsg("peerId:", id);
+    peer = new Peer(id, peerConfig);
     peer.on("error", error => {
       addMessage(error, "admin");
     });
@@ -53,8 +41,10 @@
   }
 
   function debugMsg(msg, obj) {
-    console.log(msg, obj);
-    addMessage(msg, "admin");
+    if (debugMode) {
+      console.log(msg, obj);
+      addMessage(msg, "admin");
+    }
   }
 
   function connectToPeer() {
