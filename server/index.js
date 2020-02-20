@@ -28,7 +28,7 @@ if (config.ssl) {
     const privateKey = fs.readFileSync(config.sslPaths.key);
     const certificate = fs.readFileSync(config.sslPaths.certificate);
     serverOptions.key = privateKey;
-    serverOptions.certificate = certificate
+    serverOptions.cert = certificate
     peerOptions.ssl = {
         cert: certificate,
         key: privateKey
