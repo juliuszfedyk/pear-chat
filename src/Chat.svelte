@@ -4,8 +4,11 @@
   import SideMenu from "./SideMenu.svelte";
   import VideoChat from "./VideoChat.svelte";
   import peerConfig from "../config.json";
+  import { peerStore } from "../peer.store.js";
 
   import { onMount } from "svelte";
+
+  peerStore.connect();
 
   const debugMode = true;
   let id;
