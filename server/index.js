@@ -26,6 +26,7 @@ const peerOptions = {
 
 let server;
 if (config.ssl) {
+    app.use(redirectToHTTPS());
     const privateKey = fs.readFileSync(config.sslPaths.key);
     const certificate = fs.readFileSync(config.sslPaths.certificate);
     serverOptions.key = privateKey;
