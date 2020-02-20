@@ -3,7 +3,7 @@
   import { onMount } from 'svelte';
   
   export let peerServer;
-  export let partnerId;
+  export let peerId;
 
   const dispatch = createEventDispatcher();
 
@@ -64,14 +64,13 @@
 
   const startVideoChat = async () => {
     await requestLocalVideo()
-    console.log('Calling to ' + partnerId);
+    console.log('Calling to ' + peerId);
 
-    let call = peerServer.call(partnerId, window.localStream);
+    let call = peerServer.call(peerId, window.localStream);
     console.log(call)
 
     call.on('stream', function (stream) {
         window.peer_stream = stream;
-
         onReceiveStream(stream, 'peer-camera');
     });
   }
