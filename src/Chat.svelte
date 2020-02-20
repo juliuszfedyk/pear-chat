@@ -6,11 +6,12 @@
   import peerConfig from "../config.json";
   import { getPeerService } from "./peer.service.js";
   import { onMount } from "svelte";
+  import queryString from "query-string";
 
   const debugMode = true;
   let id;
-  let peerId = "";
-  let peer;
+  let peerServer
+  let peerId;
   let connection;
   let messages = [];
   let connectedToServer = false;
@@ -19,14 +20,25 @@
 
   peerService.id.subscribe(newId => (id = newId));
   peerService.peerId.subscribe(newPeerId => (peerId = newPeerId));
-  peerService.server.subscribe(server => (connectedToServer = !!server));
+  peerService.server.subscribe(server => {
+    peerServer = server
+    connectedToServer = !!server
+  });
   peerService.dataConnection.subscribe(
     dataConnection => (connectedToPeer = !!dataConnection)
   );
 
+  peerService.messages.subscribe(newMessages => {
+    messages = newMessages
+  });
+
   onMount(() => {
     peerService.connectToServer()
-    console.log(id)
+    let queryParams = queryString.parse(window.location.search);
+    let token = queryParams['token'];
+    if (token) {
+      peerService.connectToPeer(token)
+    }
   })
 </script>
 
@@ -39,27 +51,24 @@
 
 <div class="container">
   <div class="row">
-    <div class="col-12 col-md-8 main-window">
-      <MessageList {messages} />
-      <SendMessage
-        on:message={event => peerService.sendMessage(event.detail.text)} />
-    </div>
-    <div class="col-12 col-md-4">
-      <SideMenu
-        bind:id
-        bind:peerId
-        on:connectToServer={peerService.connectToServer(id)}
-        on:connectToPeer={peerService.connectToPeer(peerId)}
-        on:disconnectFromPeer={peerService.disconnectFromPeer(peerId)}
-        {connectedToPeer}
-        {connectedToServer}
-        on:disconnectFromServer={peerService.disconnectFromServer()} />
-    </div>
+    {#if connectedToPeer}
+      <div class="col-12 main-window">
+        <MessageList {messages} />
+        <SendMessage on:message={event => peerService.sendMessage(event.detail.text)}/>
+      </div>
+    {:else}
+      <div class="col-12">
+        <SideMenu
+          bind:id
+          bind:peerId
+          on:disconnectFromServer={peerService.disconnectFromServer()} />
+      </div>
+    {/if}
   </div>
   <div class="row">
     <div class="col-12">
-      {#if peer}
-        <VideoChat {peer} {peerId} />
+      {#if peerServer && connectedToPeer}
+        <VideoChat {peerServer} {peerId} />
       {/if}
     </div>
   </div>

@@ -34,7 +34,7 @@ export function getPeerService() {
       disconnectFromPeer: () => peerService.dataConnection.set(),
       sendMessage: (msg) => {
         if (peerService.dataConnection) {
-          peerService.messages.update(messages => [...messages, { text, type:"outgoing" }]);
+          peerService.messages.update(messages => [...messages, { text: msg, type: "outgoing" }]);
           get(peerService.dataConnection).send(msg);
         }
       }
@@ -61,7 +61,7 @@ export function getPeerService() {
       if (dataConnection) {
         debugMsg("setting up connection", dataConnection);
         dataConnection.on("data", text => {
-          peerService.messages.update(messages => [...messages, { text, type:"incomiing" }]);
+          peerService.messages.update(messages => [...messages, { text, type: "incoming" }]);
         });
         dataConnection.on("close", () => {
           addMessage("connection closed", "admin");
