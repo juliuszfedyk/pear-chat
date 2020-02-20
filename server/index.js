@@ -5,6 +5,7 @@ const https = require('https');
 const http = require('http');
 const { ExpressPeerServer } = require('peer');
 const fs = require('fs');
+const redirectToHTTPS = require('express-http-to-https').redirectToHTTPS
 const config = JSON.parse(fs.readFileSync('./config.json'));
 
 
@@ -25,6 +26,7 @@ const peerOptions = {
 
 let server;
 if (config.ssl) {
+    app.use(redirectToHTTPS());
     const privateKey = fs.readFileSync(config.sslPaths.key);
     const certificate = fs.readFileSync(config.sslPaths.certificate);
     serverOptions.key = privateKey;
