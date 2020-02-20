@@ -1,0 +1,19 @@
+{
+  "peerConfig": {
+    "host": "li2039-53.members.linode.com",
+    "port": 443,
+    "path": "/api",
+    "config": {
+      "iceServers": [
+        {
+          "url": "stun:stun3.l.google.com:19302"
+        },
+        {
+          "url": "turn:numb.viagenie.ca",
+          "credential": "muazkh",
+          "username": "webrtc@live.com"
+        }
+      ]
+    }
+  }
+}
