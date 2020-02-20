@@ -1,7 +1,7 @@
 <script>
   import { createEventDispatcher } from "svelte";
   export let id;
-  export let partnerId;
+  export let peerId;
   export let connectedToPeer;
   export let connectedToServer;
   const dispatch = createEventDispatcher();
