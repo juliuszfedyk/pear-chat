@@ -2,7 +2,7 @@
   import { createEventDispatcher } from 'svelte';
   import { onMount } from 'svelte';
   
-  export let peer;
+  export let peerServer;
   export let partnerId;
 
   const dispatch = createEventDispatcher();
@@ -34,7 +34,7 @@
   }
 
   const setup = () => {
-    peer.on('call', async (call) => {
+    peerServer.on('call', async (call) => {
       let acceptsCall = confirm("Videocall incoming, do you want to accept it ?");
 
       if(acceptsCall){
@@ -65,9 +65,8 @@
   const startVideoChat = async () => {
     await requestLocalVideo()
     console.log('Calling to ' + partnerId);
-    console.log(peer);
 
-    let call = peer.call(partnerId, window.localStream);
+    let call = peerServer.call(partnerId, window.localStream);
     console.log(call)
 
     call.on('stream', function (stream) {

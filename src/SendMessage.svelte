@@ -24,7 +24,7 @@
 <div class="type-message">
   <div class="input-message-wrapper">
     <input bind:value={newMessage} on:keydown={handleInputKeydown} type="text" class="write-message" placeholder="Type a message" />
-    <button on:click={sendMessage} class="message-send-btn" type="button">
+    <button on:click={sendMessage} class="message-send-btn btn btn-primary" type="button">
       <i class="fa fa-paper-plane-o" aria-hidden="true" />
     </button>
   </div>
@@ -47,7 +47,6 @@
   }
 
   .message-send-btn {
-    background: #05728f;
     border: none;
     border-radius: 50%;
     color: #fff;
