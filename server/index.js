@@ -2,32 +2,43 @@ const express = require('express');
 const app = express();
 const path = require('path');
 const https = require('https');
+const http = require('http');
 const { ExpressPeerServer } = require('peer');
 const fs = require('fs');
+const config = JSON.parse(fs.readFileSync('./config.json'));
+
+
 
 app.use(express.static(path.join(__dirname, '../public')));
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname + '../public/index.html'));
 });
 
-const privateKey = fs.readFileSync( '/certs/privkey.pem' );
-const certificate = fs.readFileSync( '/certs/fullchain.pem' );
+const { peerConfig } = config;
 
-const server = https.createServer({
-    key: privateKey,
-    cert: certificate
-}, app).listen(443);
+const serverOptions = {};
+const peerOptions = {
+    debug: config.debugMode,
+    port: peerConfig.port,
+    path: peerConfig.path,
+}
 
-const options = {
-    debug: true,
-    port: 443,
-    path: '/api',
-    ssl: {
+let server;
+if (config.ssl) {
+    const privateKey = fs.readFileSync(config.sslPaths.key);
+    const certificate = fs.readFileSync(config.sslPaths.certificate);
+    serverOptions.key = privateKey;
+    serverOptions.certificate = certificate
+    peerOptions.ssl = {
         cert: certificate,
         key: privateKey
     }
+    server = https.createServer(serverOptions, app).listen(peerConfig.port);
+} else {
+    server = http.createServer({}, app).listen(peerConfig.port);
 }
 
-const peerserver = ExpressPeerServer(server, options);
+
+const peerserver = ExpressPeerServer(server, peerOptions);
 
 app.use('/api', peerserver);

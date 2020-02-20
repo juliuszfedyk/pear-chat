@@ -1,4 +1,10 @@
 {
+  "debugMode": true,
+  "ssl": true,
+  "sslPaths": {
+    "key": "/certs/privkey.pem",
+    "certificate": "/certs/fullchain.pem"
+  },
   "peerConfig": {
     "host": "li2039-53.members.linode.com",
     "port": 443,
