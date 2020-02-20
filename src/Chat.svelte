@@ -104,11 +104,11 @@
 
 <div class="container">
   <div class="row">
-    <div class="col-12 col-md-8 main-window">
+    <!-- <div class="col-12 col-md-8 main-window">
       <MessageList {messages} />
       <SendMessage on:message={handleNewMessage} />
-    </div>
-    <div class="col-12 col-md-4">
+    </div> -->
+    <div class="col-12">
       <SideMenu
         bind:id
         bind:partnerId
@@ -124,8 +124,6 @@
     <div class="col-12">
       {#if peer}
         <VideoChat {peer} {partnerId} />
-      {:else}
-        <div>Please connect to see video chat</div>
       {/if}
     </div>
   </div>

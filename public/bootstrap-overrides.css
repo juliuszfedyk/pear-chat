@@ -1,0 +1,24 @@
+input:focus,
+button:focus,
+button:active {
+	outline: none !important;
+}
+
+.btn-primary {
+	border: 1px solid rgba(5, 113, 143, 0.8);
+	background-color: hsl(193, 93%, 29%);
+}
+
+.btn-primary:hover {
+	background-color: hsl(193, 63%, 29%);
+}
+
+.btn-primary:focus,
+.btn-primary:active {
+	background-color: hsl(193, 43%, 29%) !important;
+}
+
+.btn-primary:disabled {
+	border: 1px solid rgba(5, 113, 143, 0.1);
+	background-color: rgba(5, 113, 143, 0.5);
+}
