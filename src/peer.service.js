@@ -5,7 +5,7 @@ let peerService;
 
 const debugMsg = (text, obj) => {
   if (debugMode) {
-    peerService.messages.update(messages => [...messages, { text, type:"admin" }]);
+    peerService.messages.update(messages => [...messages, { text, type: "admin" }]);
     console.log(text, obj);
   }
 }
@@ -43,7 +43,7 @@ export function getPeerService() {
     peerService.server.subscribe(peer => {
       if (peer) {
         peer.on("error", error => {
-        debugMsg(error, "admin");
+          debugMsg(error, "admin");
         });
         peer.on("open", newId => {
           debugMsg("connection to server opened, id is", newId);
@@ -59,16 +59,18 @@ export function getPeerService() {
 
     peerService.dataConnection.subscribe(dataConnection => {
       if (dataConnection) {
-        debugMsg("setting up connection", dataConnection);
-        dataConnection.on("data", text => {
-          peerService.messages.update(messages => [...messages, { text, type: "incoming" }]);
-        });
-        dataConnection.on("close", () => {
-        debugMsg("connection closed", "admin");
-          peerService.dataConnection.set(null);
-        });
-        dataConnection.on("error", error => {
-        debugMsg(error, "admin");
+        dataConnection.on('open', () => {
+          debugMsg("setting up connection", dataConnection);
+          dataConnection.on("data", text => {
+            peerService.messages.update(messages => [...messages, { text, type: "incoming" }]);
+          });
+          dataConnection.on("close", () => {
+            debugMsg("connection closed", "admin");
+            peerService.dataConnection.set(null);
+          });
+          dataConnection.on("error", error => {
+            debugMsg(error, "admin");
+          });
         });
       }
     })
