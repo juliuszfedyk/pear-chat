@@ -7,7 +7,7 @@
     <img src="pear.svg" alt="Pear">
   </div>
   <h1 class="heading">PearChat</h1>
-  <Chat />
+  <Chat/>
 </main>
 
 <style>
