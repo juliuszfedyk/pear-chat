@@ -1,5 +1,7 @@
 <script>
   import { createEventDispatcher } from "svelte";
+
+  import QRCode from './QRCode.svelte'
   
   const dispatch = createEventDispatcher();
   const BASE_URL = window.location.origin
@@ -58,4 +60,9 @@
   >
     {copyText}
   </button>
+  {#if id}
+    <div class="text-center">
+      <QRCode url={urlInputText}/>
+    </div>
+  {/if}
 </div>
