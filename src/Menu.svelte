@@ -1,14 +1,12 @@
 <script>
   import { createEventDispatcher } from "svelte";
-  export let id;
+  
   const dispatch = createEventDispatcher();
-
   const BASE_URL = window.location.origin
 
+  export let id;
   let urlInput;
-
   let urlInputText;
-
   let copyText = 'Copy'
 
   $: urlInputText = id ? BASE_URL + '?token=' + id : 'loading';
@@ -56,7 +54,8 @@
   <button
     type="button"
     class="btn btn-primary"
-    on:click={copyUrl}>
+    on:click={copyUrl}
+  >
     {copyText}
   </button>
 </div>

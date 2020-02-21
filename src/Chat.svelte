@@ -1,7 +1,7 @@
 <script>
   import SendMessage from "./SendMessage.svelte";
   import MessageList from "./MessageList.svelte";
-  import SideMenu from "./SideMenu.svelte";
+  import Menu from "./Menu.svelte";
   import VideoChat from "./VideoChat.svelte";
   import peerConfig from "../config.json";
   import { getPeerService } from "./peer.service.js";
@@ -9,6 +9,8 @@
   import queryString from "query-string";
 
   const debugMode = true;
+  const peerService = getPeerService();
+  
   let id;
   let peerServer
   let peerId;
@@ -16,7 +18,6 @@
   let messages = [];
   let connectedToServer = false;
   let connectedToPeer = false;
-  const peerService = getPeerService();
 
   peerService.id.subscribe(newId => (id = newId));
   peerService.peerId.subscribe(newPeerId => (peerId = newPeerId));
@@ -58,7 +59,7 @@
       </div>
     {:else}
       <div class="col-12">
-        <SideMenu
+        <Menu
           bind:id
           bind:peerId
           on:disconnectFromServer={peerService.disconnectFromServer()} />
