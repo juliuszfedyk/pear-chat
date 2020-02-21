@@ -1,12 +1,13 @@
 <script>
+  import { onMount } from "svelte";
+  import queryString from "query-string";
+  
   import SendMessage from "./SendMessage.svelte";
   import MessageList from "./MessageList.svelte";
   import Menu from "./Menu.svelte";
   import VideoChat from "./VideoChat.svelte";
   import peerConfig from "../config.json";
   import { getPeerService } from "./peer.service.js";
-  import { onMount } from "svelte";
-  import queryString from "query-string";
 
   const debugMode = true;
   const peerService = getPeerService();
