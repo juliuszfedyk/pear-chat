@@ -56,8 +56,9 @@ export function getPeerService() {
           peerService.id.set(newId);
         });
         peer.on("connection", newConnection => {
-          debugMsg("got connection from server", newConnection);
+          debugMsg("got peer connection from server", newConnection);
           peerService.dataConnection.set(newConnection);
+          peerService.peerId.set(newConnection.peer);
         });
       }
     })

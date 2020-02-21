@@ -1,17 +1,14 @@
 <script>
   import { createEventDispatcher } from "svelte";
-  import { onMount } from "svelte";
+  import { afterUpdate } from "svelte";
 
   export let peerServer;
   export let peerId;
 
   const dispatch = createEventDispatcher();
 
-  onMount(() => {
-    setup();
-  });
-
   const requestLocalVideo = async callbacks => {
+    console.log("requesting video");
     let stream = null;
 
     try {
@@ -22,7 +19,7 @@
       window.localStream = stream;
       onReceiveStream(stream, "my-camera");
     } catch (err) {
-      console.error(error);
+      console.error(err);
     }
   };
 
@@ -59,6 +56,8 @@
   const startVideoChat = async () => {
     await requestLocalVideo();
     console.log("Calling to " + peerId);
+    console.log(peerServer);
+    console.log(window.localStream);
 
     let call = peerServer.call(peerId, window.localStream);
     console.log(call);
@@ -68,6 +67,12 @@
       onReceiveStream(stream, "peer-camera");
     });
   };
+
+  afterUpdate(() => {
+    if (peerServer && peerId) {
+      setup();
+    }
+  });
 </script>
 
 <style>
@@ -87,15 +92,12 @@
     autoplay="autoplay"
     playsinline
     muted="true"
-    class="mx-auto d-inline-block"
-  />
+    class="mx-auto d-inline-block" />
   <video
     id="peer-camera"
     width="300"
     height="300"
     autoplay="autoplay"
     playsinline
-    muted="true"
-    class="mx-auto d-inline-block"
-  />
+    class="mx-auto d-inline-block" />
 </div>
