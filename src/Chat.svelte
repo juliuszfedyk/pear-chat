@@ -22,8 +22,8 @@
   peerService.id.subscribe(newId => (id = newId));
   peerService.peerId.subscribe(newPeerId => (peerId = newPeerId));
   peerService.server.subscribe(server => {
-    peerServer = server
-    connectedToServer = !!server
+    peerServer = server ? server : peerServer
+    connectedToServer = !!peerServer
   });
   peerService.dataConnection.subscribe(
     dataConnection => (connectedToPeer = !!dataConnection)
@@ -55,14 +55,19 @@
     {#if connectedToPeer}
       <div class="col-12 main-window">
         <MessageList {messages} />
-        <SendMessage on:message={event => peerService.sendMessage(event.detail.text)}/>
+        <SendMessage {id} on:message={event => peerService.sendMessage(event.detail)}/>
       </div>
-    {:else}
+    {:else if connectedToServer && id}
       <div class="col-12">
         <Menu
           bind:id
           bind:peerId
-          on:disconnectFromServer={peerService.disconnectFromServer()} />
+          on:disconnectFromServer={peerService.disconnectFromServer()} 
+        />
+      </div>
+    {:else}
+      <div class="col-12">
+        <h2 class="text-center">Connecting...</h2>
       </div>
     {/if}
   </div>

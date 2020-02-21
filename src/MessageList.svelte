@@ -12,11 +12,8 @@
 
 <div bind:this={messageListWrapper} class="message-list-wrapper">
   <div class="message-list">
-    {#each messages as { text, type }}
-      <Message
-        text="{text}"
-        type="{type}"
-      />
+    {#each messages as {message, type}}
+      <Message {message} {type}/>
     {/each}
   </div>
 </div>

@@ -1,5 +1,5 @@
 <script>
-  export let text;
+  export let message;
   export let type;
 
   let typeDictionary = {
@@ -7,11 +7,15 @@
     'outgoing': 'outgoing-message',
     'admin': 'admin-message',
   }
+
+  const formatDate = (timestamp) => {
+    return new Date(timestamp).toLocaleString()
+  }
 </script>
 
 <div class="message {typeDictionary[type] ? typeDictionary[type] : 'default-message'}">
-  <p>{text}</p>
-  <span class="time-date">11:01 AM | June 9</span>
+  <p>{message.text}</p>
+  <span class="time-date">{formatDate(message.timestamp)}</span>
 </div>
 
 <style>
