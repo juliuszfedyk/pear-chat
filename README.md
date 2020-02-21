@@ -1,6 +1,6 @@
 <br>
 <div style="text-align:center">
-    <img src="phttps://raw.githubusercontent.com/juliuszfedyk/pear-chat/master/public/pear.svg?sanitize=true" alt="drawing" style="width:200px;"/>
+    <img src="https://raw.githubusercontent.com/juliuszfedyk/pear-chat/master/public/pear.svg?sanitize=true" alt="drawing" style="width:200px;"/>
 </div>
 
 # Pear Chat
