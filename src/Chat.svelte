@@ -1,7 +1,7 @@
 <script>
   import { onMount } from "svelte";
   import queryString from "query-string";
-  
+
   import SendMessage from "./SendMessage.svelte";
   import MessageList from "./MessageList.svelte";
   import Menu from "./Menu.svelte";
@@ -9,10 +9,13 @@
   import peerConfig from "../config.json";
   import { getPeerService } from "./peer.service.js";
 
-  const debugMode = true;
+  window.debugMode = true;
   const peerService = getPeerService();
+  peerService.server.subscribe(server => {
+    console.log("getting server inside chat", server);
+  });
 
-  let id;
+  let myId;
   let peerServer;
   let peerId;
   let connection;
@@ -23,7 +26,7 @@
     console.log(peerId);
   }
 
-  peerService.id.subscribe(newId => (id = newId));
+  peerService.myId.subscribe(newId => (myId = newId));
   peerService.peerId.subscribe(newPeerId => (peerId = newPeerId));
   peerService.server.subscribe(server => {
     peerServer = server ? server : peerServer;
@@ -60,15 +63,12 @@
       <div class="col-12 main-window">
         <MessageList {messages} />
         <SendMessage
-          {id}
+          {myId}
           on:message={event => peerService.sendMessage(event.detail)} />
       </div>
-    {:else if connectedToServer && id}
+    {:else if connectedToServer && myId}
       <div class="col-12">
-        <Menu
-          bind:id
-          bind:peerId
-          on:disconnectFromServer={peerService.disconnectFromServer()} />
+        <Menu bind:myId bind:peerId />
       </div>
     {:else}
       <div class="col-12">
@@ -78,8 +78,8 @@
   </div>
   <div class="row">
     <div class="col-12">
-      {#if peerServer && connectedToPeer && peerId}
-        <VideoChat {peerServer} {peerId} />
+      {#if peerServer && connectedToPeer}
+        <VideoChat {peerService} />
       {/if}
     </div>
   </div>

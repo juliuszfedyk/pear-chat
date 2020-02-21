@@ -1,46 +1,21 @@
 <script>
-  import { createEventDispatcher } from "svelte";
-  import { afterUpdate } from "svelte";
+  import { createEventDispatcher, onMount, afterUpdate } from "svelte";
+  import { get } from "svelte/store";
 
-  export let peerServer;
-  export let peerId;
-
-  const dispatch = createEventDispatcher();
-
-  const requestLocalVideo = async callbacks => {
-    console.log("requesting video");
-    let stream = null;
-
-    try {
-      stream = await navigator.mediaDevices.getUserMedia({
-        audio: true,
-        video: true
-      });
-      window.localStream = stream;
-      onReceiveStream(stream, "my-camera");
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-  const onReceiveStream = (stream, element_id) => {
-    let video = document.getElementById(element_id);
-    video.srcObject = stream;
-    window.peer_stream = stream;
-  };
-
-  const setup = () => {
+  const setup = peerServer => {
     peerServer.on("call", async call => {
       let acceptsCall = confirm(
         "Videocall incoming, do you want to accept it ?"
       );
 
       if (acceptsCall) {
-        await requestLocalVideo();
-        call.answer(window.localStream);
+        const localStream = await requestLocalVideo();
+        if (!localStream) {
+          return;
+        }
+        call.answer(localStream);
 
         call.on("stream", stream => {
-          window.peer_stream = stream;
           onReceiveStream(stream, "peer-camera");
         });
 
@@ -48,31 +23,52 @@
           alert("The videocall has finished");
         });
       } else {
-        console.log("Call denied !");
+        peerService.debugMsg("Your rejected the call.");
       }
     });
   };
 
+  export let peerService;
+  const dispatch = createEventDispatcher();
+  let peerServer;
+  let peerId;
+
+  peerService.peerId.subscribe(id => (peerId = id));
+  peerService.server.subscribe(server => {
+    if (server) {
+      setup(server);
+    }
+  });
+  
+  const requestLocalVideo = async callbacks => {
+    let stream = null;
+    try {
+      stream = await navigator.mediaDevices.getUserMedia({
+        audio: true,
+        video: true
+      });
+      onReceiveStream(stream, "my-camera");
+      return stream;
+    } catch (err) {
+      peerService.debugMsg("Pear chat could not access your camera..", err);
+    }
+  };
+
+  const onReceiveStream = (stream, element_id) => {
+    let video = document.getElementById(element_id);
+    video.srcObject = stream;
+  };
+
   const startVideoChat = async () => {
-    await requestLocalVideo();
-    console.log("Calling to " + peerId);
-    console.log(peerServer);
-    console.log(window.localStream);
-
-    let call = peerServer.call(peerId, window.localStream);
-    console.log(call);
-
+    const localStream = await requestLocalVideo();
+    if (!localStream) {
+      return;
+    }
+    let call = get(peerService.server).call(peerId, localStream);
     call.on("stream", function(stream) {
-      window.peer_stream = stream;
       onReceiveStream(stream, "peer-camera");
     });
   };
-
-  afterUpdate(() => {
-    if (peerServer && peerId) {
-      setup();
-    }
-  });
 </script>
 
 <style>

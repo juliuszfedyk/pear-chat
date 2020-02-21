@@ -3,7 +3,7 @@
 
   const dispatch = createEventDispatcher();
   
-  export let id;
+  export let myId;
   let newMessage = {
     id: '',
     text: '',
@@ -12,11 +12,11 @@
 
 	function sendMessage() {
     if (newMessage.text === '') { return }
-    newMessage.id = id;
+    newMessage.senderId = myId;
     newMessage.timestamp = new Date().getTime();
 		dispatch('message', newMessage);
     newMessage = {
-      id: '',
+      senderId: '',
       text: '',
       timestamp: ''
     };

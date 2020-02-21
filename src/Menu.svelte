@@ -6,12 +6,12 @@
   const dispatch = createEventDispatcher();
   const BASE_URL = window.location.origin
 
-  export let id;
+  export let myId;
   let urlInput;
   let urlInputText;
   let copyText = 'Copy'
 
-  $: urlInputText = id ? BASE_URL + '?token=' + id : 'loading';
+  $: urlInputText = myId ? BASE_URL + '?token=' + myId : 'loading';
 
   const copyUrl = () => {
     urlInput.select();
@@ -60,7 +60,7 @@
   >
     {copyText}
   </button>
-  {#if id}
+  {#if myId}
     <div class="text-center">
       <QRCode url={urlInputText}/>
     </div>
