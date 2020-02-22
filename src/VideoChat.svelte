@@ -30,8 +30,31 @@
 
   export let peerService;
   const dispatch = createEventDispatcher();
-  let peerServer;
   let peerId;
+  let videoCallOn = false;
+  let myCamera;
+  let peerCamera;
+  $: {
+    if (myCamera) {
+      myCamera.isPlaying = function() {
+        return isPlaying(myCamera);
+      };
+    }
+  }
+  const isPlaying = element => {
+    console.log("checking if " + element + " is playing");
+    if (!element) return false;
+    const answer = Boolean(
+      element.currentTime > 0 &&
+        !element.paused &&
+        !element.ended &&
+        element.readyState > 2
+    );
+    console.log("answer is ", answer);
+    return answer;
+  };
+  $: myCameraPlaying = isPlaying(myCamera);
+  $: peerCameraPlaying = isPlaying(peerCamera);
 
   peerService.peerId.subscribe(id => (peerId = id));
   peerService.server.subscribe(server => {
@@ -39,7 +62,7 @@
       setup(server);
     }
   });
-  
+
   const requestLocalVideo = async callbacks => {
     let stream = null;
     try {
@@ -60,8 +83,10 @@
   };
 
   const startVideoChat = async () => {
+    videoCallOn = true;
     const localStream = await requestLocalVideo();
     if (!localStream) {
+      videoCallOn = false;
       return;
     }
     let call = get(peerService.server).call(peerId, localStream);
@@ -75,25 +100,39 @@
   .video-chat {
     margin-top: 30px;
   }
+  video.my-camera {
+    background-color: hsl(80, 93%, 29%);
+  }
+  video.peer-camera {
+    background-color: hsl(193, 93%, 29%);
+  }
 </style>
 
 <div class="video-chat">
+  {#if myCamera}
+    <div>{myCameraPlaying}</div>
+  {/if}
   <button class="btn btn-primary d-block" on:click={startVideoChat}>
     Start video chat
   </button>
-  <video
-    id="my-camera"
-    width="300"
-    height="300"
-    autoplay="autoplay"
-    playsinline
-    muted="true"
-    class="mx-auto d-inline-block" />
-  <video
-    id="peer-camera"
-    width="300"
-    height="300"
-    autoplay="autoplay"
-    playsinline
-    class="mx-auto d-inline-block" />
+  {#if videoCallOn}
+    <div class="videos">
+      <video
+        bind:this={myCamera}
+        id="my-camera"
+        width="300"
+        height="300"
+        autoplay="autoplay"
+        playsinline
+        muted="true"
+        class="mx-auto d-inline-block my-camera" />
+      <video
+        id="peer-camera"
+        width="300"
+        height="300"
+        autoplay="autoplay"
+        playsinline
+        class="mx-auto d-inline-block peer-camera" />
+    </div>
+  {/if}
 </div>
