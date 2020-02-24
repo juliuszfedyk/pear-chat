@@ -1,20 +1,6 @@
 import peerConfig from "../config.json"
 import { writable, get } from "svelte/store"
-const debugMode = true;
 let peerService;
-
-const debugMsg = (text, obj) => {
-  if (debugMode) {
-    const timestamp = new Date().getTime()
-    let message = {
-      id: '',
-      text,
-      timestamp
-    }
-    peerService.messages.update(messages => [...messages, { message, type: 'admin'}]);
-    console.log(text, obj);
-  }
-}
 
 export function getPeerService() {
 
@@ -22,17 +8,18 @@ export function getPeerService() {
     return peerService
   } else {
     peerService = {
-      id: writable(),
+      myId: writable(),
       server: writable(),
       peerId: writable(),
       messages: writable([]),
       dataConnection: writable(),
-      connectToServer: (id) => {
-        debugMsg("peerId:", id);
-        peerService.id.set(id);
-        peerService.server.set(new Peer(id, peerConfig));
+      connectToServer: (myId) => {
+        peerService.debugMsg("myid:", myId);
+        peerService.myId.set(myId);
+        const server = new Peer(myId, peerConfig);
+        peerService.server.set(server);
+
       },
-      disconnectFromServer: () => peerService.server.set(),
       connectToPeer: (peerId) => {
         peerService.peerId.set(peerId);
         peerService.dataConnection.set(get(peerService.server).connect(peerId));
@@ -43,21 +30,34 @@ export function getPeerService() {
           peerService.messages.update(messages => [...messages, { message: newMessage, type: 'outgoing'}]);
           get(peerService.dataConnection).send(newMessage);
         }
+      },
+      debugMsg: (text, obj) => {
+        if (window.debugMode) {
+          const timestamp = new Date().getTime()
+          let message = {
+            id: '',
+            text,
+            timestamp
+          }
+          peerService.messages.update(messages => [...messages, { message, type: 'admin'}]);
+          console.log(text, obj);
+        }
       }
     }
 
     peerService.server.subscribe(peer => {
       if (peer) {
         peer.on("error", error => {
-          debugMsg(error, "admin");
+          peerService.debugMsg(error, "admin");
         });
         peer.on("open", newId => {
-          debugMsg("connection to server opened, id is", newId);
-          peerService.id.set(newId);
+          peerService.debugMsg("connection to server opened, id is", newId );
+          peerService.myId.set(newId);
         });
         peer.on("connection", newConnection => {
-          debugMsg("got connection from server", newConnection);
+          peerService.debugMsg("got peer connection from server", newConnection);
           peerService.dataConnection.set(newConnection);
+          peerService.peerId.set(newConnection.peer);
         });
       }
     })
@@ -66,16 +66,16 @@ export function getPeerService() {
     peerService.dataConnection.subscribe(dataConnection => {
       if (dataConnection) {
         dataConnection.on('open', () => {
-          debugMsg("setting up connection", dataConnection);
+          peerService.debugMsg("setting up connection", dataConnection);
           dataConnection.on("data", newMessage => {
             peerService.messages.update(messages => [...messages, { message: newMessage, type: 'incoming'}]);
           });
           dataConnection.on("close", () => {
-            debugMsg("connection closed", "admin");
+            peerService.debugMsg("connection closed", "admin");
             peerService.dataConnection.set(null);
           });
           dataConnection.on("error", error => {
-            debugMsg(error, "admin");
+            peerService.debugMsg(error, "admin");
           });
         });
       }
